@@ -11,8 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.Matchers.hasLength;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * This test is a controller integration test as it
@@ -45,17 +44,17 @@ class WordControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    @DisplayName("provides random 5, 6, and 7 letter words")
-    void provideWords() throws Exception {
-        for (int length = 5; length <= 7; length++) {
-            RequestBuilder request = MockMvcRequestBuilders
-                    .get("/words/random")
-                    .param("length", String.valueOf(length));
-
-            mockMvc.perform(request)
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(hasLength(length)));
-        }
-    }
+//    @Test
+//    @DisplayName("provides random 5, 6, and 7 letter words")
+//    void provideWords() throws Exception {
+//        for (int length = 5; length <= 7; length++) {
+//            RequestBuilder request = MockMvcRequestBuilders
+//                    .get("/words/random")
+//                    .param("length", String.valueOf(length));
+//
+//            mockMvc.perform(request)
+//                    .andExpect(status().isOk())
+//                    .andExpect(content().string(hasLength(length)));
+//        }
+//    }
 }
