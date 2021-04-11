@@ -1,8 +1,8 @@
 package nl.hu.cisq1.lingo.game.domain;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordException;
 
 import javax.persistence.ElementCollection;
@@ -11,11 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
-@EqualsAndHashCode
 @Entity
 @NoArgsConstructor
+@ToString
 public class Feedback {
     @Id
     @GeneratedValue
@@ -87,5 +88,21 @@ public class Feedback {
             }
         }
         return word;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Feedback feedback = (Feedback) o;
+        return Objects.equals(id, feedback.id) &&
+                Objects.equals(evaluation, feedback.evaluation) &&
+                Objects.equals(attempt, feedback.attempt) &&
+                Objects.equals(wordToGuess, feedback.wordToGuess);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, evaluation, attempt, wordToGuess);
     }
 }

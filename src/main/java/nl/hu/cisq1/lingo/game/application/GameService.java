@@ -26,11 +26,10 @@ public class GameService {
         Game game = this.gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException());
 
         if (game.getCurrentRound() != null){
-            if (game.getState().equals(GameState.ELIMINATED)){
-                throw new LostGameException();
-            }
             if (game.getState().equals(GameState.PLAYING)){
                 throw new RoundAlreadyPlayingException();
+            } else if (game.getState().equals(GameState.ELIMINATED)){
+                throw new LostGameException();
             }
         }
         String wordToGuess = this.wordService.provideRandomWord(game.getWordLength());
