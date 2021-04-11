@@ -74,4 +74,17 @@ public class GameTest {
                 Arguments.of(5, 5)
         );
     }
+
+    @Test
+    @DisplayName("Go from 7 letters to 5 again")
+    void backToFive(){
+        game.newRound("tests");
+        game.guess("tests");
+        game.newRound("school");
+        game.guess("school");
+        game.newRound("paginas");
+        game.guess("paginas");
+        game.newRound("tests");
+        assertEquals(6, game.getWordLength());
+    }
 }

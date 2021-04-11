@@ -1,6 +1,5 @@
 package nl.hu.cisq1.lingo.game.domain;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordException;
 import nl.hu.cisq1.lingo.game.domain.exception.NotPlayingException;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 @Entity
 @NoArgsConstructor
 public class Round {
@@ -75,5 +73,17 @@ public class Round {
 
     public int getAttemptsLength(){
         return this.attempts.size();
+    }
+
+    public GameState getState(){
+        return state;
+    }
+
+    public String getHint(){
+        return hint;
+    }
+
+    public List<Feedback> getHistory(){
+        return history;
     }
 }

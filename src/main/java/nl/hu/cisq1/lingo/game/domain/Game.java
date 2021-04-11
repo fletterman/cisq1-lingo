@@ -1,6 +1,5 @@
 package nl.hu.cisq1.lingo.game.domain;
 
-import lombok.Getter;
 import nl.hu.cisq1.lingo.game.domain.exception.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -13,7 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 @Entity
 public class Game implements Serializable {
     @Id
@@ -79,7 +77,7 @@ public class Game implements Serializable {
     }
 
     public Round getCurrentRound(){
-        if (rounds.size() == 0){
+        if (this.rounds.size() == 0){
             return null;
         } else {
             return rounds.get(rounds.size() - 1);
@@ -92,5 +90,17 @@ public class Game implements Serializable {
 
     public Progress showProgress(){
         return new Progress(id, this.score, getTotalRounds(), getState(), getCurrentRound().getHistory(), hint);
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public int getWordLength(){
+        return wordLength;
+    }
+
+    public int getScore(){
+        return score;
     }
 }

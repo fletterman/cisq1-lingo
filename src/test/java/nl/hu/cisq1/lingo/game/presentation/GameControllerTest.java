@@ -5,6 +5,7 @@ import nl.hu.cisq1.lingo.CiTestConfiguration;
 import nl.hu.cisq1.lingo.game.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordLengthException;
+import nl.hu.cisq1.lingo.game.domain.exception.LostGameException;
 import nl.hu.cisq1.lingo.game.domain.exception.RoundAlreadyPlayingException;
 import nl.hu.cisq1.lingo.game.presentation.dto.AttemptDTO;
 import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
@@ -25,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -154,5 +156,22 @@ public class GameControllerTest {
         mockMvc.perform(requestBuilder);
         mockMvc.perform(requestBuilder);
         mockMvc.perform(requestBuilder).andExpect(jsonPath("$.errorCode").value("CONFLICT"));
+    }
+
+    @Test
+    @DisplayName("New round when already eliminated")
+    void alreadyEliminated() throws Exception {
+        game.newRound("tests");
+        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        AttemptDTO attemptDTO = new AttemptDTO("pests");
+        String guessBody = new ObjectMapper().writeValueAsString(attemptDTO);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        System.out.println(game.getCurrentRound() + " tests");
+        assertThrows(LostGameException.class, () -> game.newRound("plests"));
     }
 }
