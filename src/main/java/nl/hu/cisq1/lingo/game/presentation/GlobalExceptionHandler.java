@@ -19,24 +19,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidWordException.class)
-    public ResponseEntity<ExceptionResponse> invalidWord(InvalidWordException ex){
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setErrorCode("CONFLICT");
-        exceptionResponse.setErrorMessage(ex.getMessage());
-        exceptionResponse.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(InvalidWordLengthException.class)
-    public ResponseEntity<ExceptionResponse> invalidLength(InvalidWordLengthException ex){
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setErrorCode("CONFLICT");
-        exceptionResponse.setErrorMessage(ex.getMessage());
-        exceptionResponse.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(LostGameException.class)
     public ResponseEntity<ExceptionResponse> lostGame(LostGameException ex){
         ExceptionResponse exceptionResponse = new ExceptionResponse();

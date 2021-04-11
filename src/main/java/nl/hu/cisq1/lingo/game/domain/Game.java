@@ -31,6 +31,10 @@ public class Game implements Serializable {
     }
 
     public Progress newRound(String wordToGuess) throws RoundAlreadyPlayingException, InvalidWordLengthException {
+        if (rounds.size() >= 1 && rounds.get(rounds.size()-1).getState() == GameState.ELIMINATED){
+            throw new LostGameException();
+        }
+
         if (wordToGuess.length() != wordLength){
             throw new InvalidWordLengthException();
         }

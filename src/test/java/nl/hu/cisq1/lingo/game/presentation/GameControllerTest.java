@@ -1,9 +1,11 @@
 package nl.hu.cisq1.lingo.game.presentation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.hu.cisq1.lingo.CiTestConfiguration;
 import nl.hu.cisq1.lingo.game.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
+import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordException;
 import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordLengthException;
 import nl.hu.cisq1.lingo.game.domain.exception.LostGameException;
 import nl.hu.cisq1.lingo.game.domain.exception.RoundAlreadyPlayingException;
@@ -171,7 +173,20 @@ public class GameControllerTest {
         mockMvc.perform(requestBuilder);
         mockMvc.perform(requestBuilder);
         mockMvc.perform(requestBuilder);
-        System.out.println(game.getCurrentRound() + " tests");
+        System.out.println(game.getCurrentRound().getState() + " tests");
         assertThrows(LostGameException.class, () -> game.newRound("plests"));
+    }
+
+    @Test
+    @DisplayName("Making a round with a word that doesn't have the right amount of letters")
+    void invalidWordLength(){
+        assertThrows(InvalidWordLengthException.class, () -> game.newRound("test"));
+    }
+
+    @Test
+    @DisplayName("Guessing a word with the wrong length in letters")
+    void invalidAnswerLength() throws JsonProcessingException {
+        game.newRound("tests");
+        assertThrows(InvalidWordException.class, () -> game.guess("testen"));
     }
 }

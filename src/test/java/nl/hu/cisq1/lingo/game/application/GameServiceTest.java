@@ -7,18 +7,26 @@ import nl.hu.cisq1.lingo.words.application.WordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@AutoConfigureMockMvc
 public class GameServiceTest {
     WordService wordService;
     SpringGameRepository gameRepository;
     GameService gameService;
+    Game game;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     void before(){
-        Game game = new Game();
+        game = new Game();
         wordService = mock(WordService.class);
         when(wordService.provideRandomWord(5)).thenReturn("baard");
         when(wordService.provideRandomWord(6)).thenReturn("baarde");
@@ -56,5 +64,15 @@ public class GameServiceTest {
             gameService.guess(0L, "guess");
         }
         assertThrows(LostGameException.class, () -> gameService.guess(0L, "test"));
+    }
+
+    @Test
+    @DisplayName("New round when already eliminated")
+    void alreadyEliminated() throws Exception {
+        gameService.newRound(0L);
+        for (int i = 0; i < 5; i++) {
+            gameService.guess(0L, "guess");
+        }
+        assertThrows(LostGameException.class, () -> gameService.newRound(0L));
     }
 }
