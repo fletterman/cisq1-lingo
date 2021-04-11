@@ -19,9 +19,6 @@ public class GameController {
     @PostMapping("/game")
     public NewGameDTO newGame(){
         NewGameDTO newGameDTO = new NewGameDTO(gameService.newGame());
-        if (newGameDTO == null){
-            throw new GameNotFoundException();
-        }
         return newGameDTO;
     }
 
