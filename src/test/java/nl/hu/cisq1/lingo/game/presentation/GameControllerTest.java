@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.hu.cisq1.lingo.CiTestConfiguration;
 import nl.hu.cisq1.lingo.game.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
-import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordLength;
+import nl.hu.cisq1.lingo.game.domain.exception.InvalidWordLengthException;
 import nl.hu.cisq1.lingo.game.domain.exception.RoundAlreadyPlayingException;
 import nl.hu.cisq1.lingo.game.presentation.dto.AttemptDTO;
 import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
@@ -71,7 +71,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("Making a guess")
-    void guess() throws InvalidWordLength, RoundAlreadyPlayingException, Exception {
+    void guess() throws InvalidWordLengthException, RoundAlreadyPlayingException, Exception {
         game.newRound("tests");
         when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
         AttemptDTO attemptDTO = new AttemptDTO("plats");
@@ -83,21 +83,76 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$.score", is(25)))
                 .andExpect(jsonPath("$.hint", is("t..ts")));
     }
-//
-//    @Test
-//    @DisplayName("Making a guess when round hasn't started yet")
-//    void guessRoundNotStarted() throws Exception {
-//        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
-//        AttemptDTO attemptDTO = new AttemptDTO("plats");
-//        String guessBody = new ObjectMapper().writeValueAsString(attemptDTO);
-//        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
-//        mockMvc.perform(requestBuilder).andExpect(jsonPath("$.errorCode").value("CONFLICT"));
-//    }
 
-//    @Test
-//    @DisplayName("Starting round with no game active")
-//    void noGame() throws Exception {
-//        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/2/round");
-//        mockMvc.perform(requestBuilder).andExpect(jsonPath("$.errorCode").value("NOT FOUND"));
-//    }
+    @Test
+    @DisplayName("Making a guess when round hasn't started yet")
+    void guessRoundNotStarted() throws Exception {
+        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        AttemptDTO attemptDTO = new AttemptDTO("plats");
+        String guessBody = new ObjectMapper().writeValueAsString(attemptDTO);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
+        mockMvc.perform(requestBuilder).andExpect(jsonPath("$.errorCode").value("CONFLICT"));
+    }
+
+    @Test
+    @DisplayName("Starting round with no game active")
+    void noGame() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/2/round");
+        mockMvc.perform(requestBuilder).andExpect(jsonPath("$.errorCode").value("NOT FOUND"));
+    }
+
+    @Test
+    @DisplayName("Starting round on an already active game")
+    void alreadyRunningRound() throws Exception {
+        when(wordRepository.findRandomWordByLength(5)).thenReturn(Optional.of(new Word("tests")));
+        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/round");
+        RequestBuilder requestBuilder1 = MockMvcRequestBuilders.post("/game/game/0/round");
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder1).andExpect(jsonPath("$.errorCode").value("CONFLICT"));
+    }
+
+    @Test
+    @DisplayName("Guessing with an already ended game")
+    void alreadyEnded() throws Exception, RoundAlreadyPlayingException, InvalidWordLengthException {
+        game.newRound("tests");
+        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        AttemptDTO attemptDTO = new AttemptDTO("tests");
+        String guessBody = new ObjectMapper().writeValueAsString(attemptDTO);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
+        RequestBuilder requestBuilder1 = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder1).andExpect(jsonPath("$.errorCode").value("CONFLICT"));
+    }
+
+    @Test
+    @DisplayName("Lost game")
+    void lostGame() throws RoundAlreadyPlayingException, InvalidWordLengthException, Exception {
+        game.newRound("tests");
+        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        AttemptDTO attemptDTO = new AttemptDTO("pests");
+        String guessBody = new ObjectMapper().writeValueAsString(attemptDTO);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder).andExpect(jsonPath("$.state", is("ELIMINATED")));
+    }
+
+    @Test
+    @DisplayName("Guessing in an already lost round")
+    void alreadyLost() throws RoundAlreadyPlayingException, InvalidWordLengthException, Exception {
+        game.newRound("tests");
+        when(gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        AttemptDTO attemptDTO = new AttemptDTO("pests");
+        String guessBody = new ObjectMapper().writeValueAsString(attemptDTO);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/game/game/0/guess").contentType(MediaType.APPLICATION_JSON).content(guessBody);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder).andExpect(jsonPath("$.errorCode").value("CONFLICT"));
+    }
 }

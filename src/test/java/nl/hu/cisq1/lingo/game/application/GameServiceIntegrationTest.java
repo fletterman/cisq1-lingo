@@ -32,7 +32,7 @@ public class GameServiceIntegrationTest {
     private Long id;
 
     @BeforeEach
-    void setup() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLength {
+    void setup() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLengthException {
         when(wordRepository.findRandomWordByLength(5)).thenReturn(Optional.of(new Word("baard")));
         id = gameService.newGame();
         gameService.newRound(id);
@@ -40,7 +40,7 @@ public class GameServiceIntegrationTest {
 
     @Test
     @DisplayName("Starting new round")
-    void newRound() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLength {
+    void newRound() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLengthException {
         Long id = gameService.newGame();
         Progress progress = gameService.newRound(id);
         assertEquals(GameState.PLAYING, progress.getState());

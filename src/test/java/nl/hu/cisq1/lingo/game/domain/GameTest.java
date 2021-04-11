@@ -23,7 +23,7 @@ public class GameTest {
     @Test
     @DisplayName("Throw when word to guess is invalid")
     void invalidWord(){
-        assertThrows(InvalidWordLength.class, () -> game.newRound("test"));
+        assertThrows(InvalidWordLengthException.class, () -> game.newRound("test"));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class GameTest {
 
     @Test
     @DisplayName("Next word is longer when last word was guessed")
-    void nextLength() throws InvalidWordLength, RoundAlreadyPlayingException, InvalidWordException, NotPlayingException, RoundsNotStartedException {
+    void nextLength() throws InvalidWordLengthException, RoundAlreadyPlayingException, InvalidWordException, NotPlayingException, RoundsNotStartedException {
         game.newRound("baard");
         game.guess("baard");
         assertEquals(game.getWordLength(), 6);
@@ -42,7 +42,7 @@ public class GameTest {
 
     @Test
     @DisplayName("Still playing")
-    void stillPlaying() throws InvalidWordLength, RoundAlreadyPlayingException {
+    void stillPlaying() throws InvalidWordLengthException, RoundAlreadyPlayingException {
         game.newRound("baard");
         assertThrows(RoundAlreadyPlayingException.class, () -> game.newRound("baarde"));
     }
@@ -56,7 +56,7 @@ public class GameTest {
     @ParameterizedTest
     @MethodSource("scores")
     @DisplayName("Score per attempt")
-    void score(int attempts, int score) throws InvalidWordException, NotPlayingException, RoundsNotStartedException, InvalidWordLength, RoundAlreadyPlayingException {
+    void score(int attempts, int score) throws InvalidWordException, NotPlayingException, RoundsNotStartedException, InvalidWordLengthException, RoundAlreadyPlayingException {
         game.newRound("baard");
         for (int i = 0; i < attempts - 1; i++) {
             game.guess("paard");

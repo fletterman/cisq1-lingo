@@ -43,14 +43,14 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("The game has already been started")
-    void alreadyStarted() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLength {
+    void alreadyStarted() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLengthException {
         gameService.newRound(0L);
         assertThrows(RoundAlreadyPlayingException.class, () -> gameService.newRound(0L));
     }
 
     @Test
     @DisplayName("The game has already ended")
-    void alreadyEnded() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLength, RoundsNotStartedException, NotPlayingException, InvalidWordException {
+    void alreadyEnded() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLengthException, RoundsNotStartedException, NotPlayingException, InvalidWordException {
         gameService.newRound(0L);
         for (int i = 0; i < 5; i++) {
             gameService.guess(0L, "guess");

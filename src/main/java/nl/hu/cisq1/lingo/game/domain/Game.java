@@ -32,9 +32,9 @@ public class Game implements Serializable {
         this.rounds = new ArrayList<>();
     }
 
-    public Progress newRound(String wordToGuess) throws RoundAlreadyPlayingException, InvalidWordLength {
+    public Progress newRound(String wordToGuess) throws RoundAlreadyPlayingException, InvalidWordLengthException {
         if (wordToGuess.length() != wordLength){
-            throw new InvalidWordLength();
+            throw new InvalidWordLengthException();
         }
         if (getTotalRounds() >= 1){
             if (rounds.get(rounds.size() - 1).getState() == GameState.PLAYING){

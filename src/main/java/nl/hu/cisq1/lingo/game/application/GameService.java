@@ -22,7 +22,7 @@ public class GameService {
         return game.getId();
     }
 
-    public Progress newRound(Long id) throws RoundAlreadyPlayingException, InvalidWordLength, GameNotFoundException, LostGameException {
+    public Progress newRound(Long id) throws RoundAlreadyPlayingException, InvalidWordLengthException, GameNotFoundException, LostGameException {
         Game game = this.gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException());
 
         if (game.getCurrentRound() != null){

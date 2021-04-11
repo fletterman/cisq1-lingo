@@ -18,11 +18,6 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Analyze with SonarCloud
-        env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
@@ -31,3 +26,8 @@ jobs:
           restore-keys: ${{ runner.os }}-m2-0
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify -Dspring.profiles.active=ci
+      - name: Analyze with SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dspring.profiles.active=ci -Dsonar.login=$SONAR_TOKEN

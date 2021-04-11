@@ -23,7 +23,7 @@ public class GameController {
     }
 
     @PostMapping("/game/{id}/round")
-    public Progress newRound(@PathVariable Long id) throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLength {
+    public Progress newRound(@PathVariable Long id) throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLengthException {
         return gameService.newRound(id);
     }
 

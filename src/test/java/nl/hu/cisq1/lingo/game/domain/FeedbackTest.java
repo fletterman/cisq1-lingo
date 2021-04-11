@@ -70,7 +70,7 @@ public class FeedbackTest {
 
     @Test
     @DisplayName("Invalid word if amount of letters isn't the same")
-    void invalidWord() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLength {
+    void invalidWord() throws LostGameException, GameNotFoundException, RoundAlreadyPlayingException, InvalidWordLengthException {
         gameService.newRound(0L);
         assertThrows(InvalidWordException.class, () -> gameService.guess(0L, "test"));
     }
