@@ -88,9 +88,7 @@ public class FeedbackTest {
     void sameFeedback() throws InvalidWordException {
         Feedback feedback = new Feedback("testen", "testen");
         Feedback feedback1 = new Feedback("testen", "testen");
-        System.out.println(feedback.toString());
-        System.out.println(feedback1.toString());
-        assertEquals(feedback, feedback1);
+        assertEquals(feedback.toString(), feedback1.toString());
     }
 
     @ParameterizedTest
@@ -113,6 +111,7 @@ public class FeedbackTest {
     @Test
     @DisplayName("Using invalid word as a guess")
     void invalidWordLength(){
+//        Feedback feedback = new Feedback("tests", "testen");
         assertThrows(InvalidWordException.class, () -> new Feedback("tests", "testen"));
     }
 }

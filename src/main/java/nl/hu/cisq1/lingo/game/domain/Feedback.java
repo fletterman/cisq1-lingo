@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Entity
@@ -38,7 +37,7 @@ public class Feedback {
         List<Evaluation> evaluationList = new ArrayList<>();
 
         if (wordToGuessLetters.length != attemptLetters.length){
-            invalidWord();
+            throw new InvalidWordException();
         }
 
         List<String> presentLetters = new ArrayList<>();
@@ -68,10 +67,6 @@ public class Feedback {
         return this.evaluation.stream().allMatch(Evaluation.CORRECT::equals);
     }
 
-    public void invalidWord() throws InvalidWordException {
-        throw new InvalidWordException();
-    }
-
     public String getHint(String hint){
         String word = "";
         String[] letters = this.wordToGuess.split("");
@@ -88,21 +83,5 @@ public class Feedback {
             }
         }
         return word;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Feedback feedback = (Feedback) o;
-        return Objects.equals(id, feedback.id) &&
-                Objects.equals(evaluation, feedback.evaluation) &&
-                Objects.equals(attempt, feedback.attempt) &&
-                Objects.equals(wordToGuess, feedback.wordToGuess);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, evaluation, attempt, wordToGuess);
     }
 }
